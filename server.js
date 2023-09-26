@@ -1,6 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const PORT = process.env.PORT;
 
 const app = express();
 
@@ -10,14 +15,22 @@ app.use(
     })
 );
 
-const PORT = 5000;
+app.use(bodyParser.json());
+
+const supplierUpload = require('./config/supplierDataStorage');
 
 const connectDB = require('./db/db');
 const adminRoutes = require('./routes/adminRoutes');
+const supplierRoutes = require('./routes/supplierRoutes');
 
 connectDB();
 
-app.use('/admin', bodyParser.json(), adminRoutes);
+app.use('/admin', adminRoutes);
+app.use('/supplier', supplierRoutes);
+
+app.post('/supplier/fileUpload', supplierUpload.single('file'), (req, res) => {
+    res.status(201).json("Done");
+});
 
 app.listen(PORT, () => {
     console.log(`Server is listening on PORT: ${PORT}`);

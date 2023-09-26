@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const supplierSchema = mongoose.Schema({
     supplierID: {
         type: String,
-        required: true
+        default: "None"
     },
     name: {
         type: String
@@ -14,23 +14,34 @@ const supplierSchema = mongoose.Schema({
     phone: {
         type: String
     },
-    resourceType: {
+    password: {
         type: String
+    },
+    resourceType: {
+        type: String,
+        default: ""
     },
     location: {
-        type: String
+        type: String,
+        default: ""
     },
     availability: {
-        type: String
+        type: String,
+        default: ""
     },
     rating: {
-        type: Number
+        type: Number,
+        default: 0
     },
     comments: {
         type: Array
     },
     status: {
         type: Array
+    },
+    authorizer: {
+        type: String,
+        default: ""
     }
 });
 

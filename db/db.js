@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        dbURL = "mongodb+srv://cdp:cdp@cluster0.y4taiwi.mongodb.net/";
+        dbURL = process.env.HOST;
 
         mongoose.set("strictQuery", false);
 
