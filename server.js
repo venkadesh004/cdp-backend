@@ -22,11 +22,13 @@ const supplierUpload = require('./config/supplierDataStorage');
 const connectDB = require('./db/db');
 const adminRoutes = require('./routes/adminRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
+const companyRoutes = require('./routes/companyRoutes');
 
 connectDB();
 
 app.use('/admin', adminRoutes);
 app.use('/supplier', supplierRoutes);
+app.use('/company', companyRoutes);
 
 app.post('/supplier/fileUpload', supplierUpload.single('file'), (req, res) => {
     res.status(201).json("Done");
