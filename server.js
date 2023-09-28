@@ -17,12 +17,14 @@ app.use(
 
 app.use(bodyParser.json());
 
-const supplierUpload = require('./config/supplierDataStorage');
+const {supplierUpload, companyUpload} = require('./config/supplierDataStorage');
 
 const connectDB = require('./db/db');
 const adminRoutes = require('./routes/adminRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
 const companyRoutes = require('./routes/companyRoutes');
+const SupplierSchema = require('./models/supplierSchema');
+const CompanySchema = require('./models/companySchema');
 
 connectDB();
 
@@ -30,8 +32,50 @@ app.use('/admin', adminRoutes);
 app.use('/supplier', supplierRoutes);
 app.use('/company', companyRoutes);
 
-app.post('/supplier/fileUpload', supplierUpload.single('file'), (req, res) => {
-    res.status(201).json("Done");
+app.post('/supplier/fileUpload', supplierUpload.single('file'), async (req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+
+    try {
+        const data = req.body;
+
+        await SupplierSchema.updateOne({_id: data["_id"]}, {
+            $set: {
+                filename: req.file.filename
+            }
+        }).then(result => {
+            console.log(result);
+            res.status(201).json(result);
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({err: "Internal server Error!"});
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({err: "Internal server Error!"});
+    }
+});
+
+app.post('/company/fileUpload', companyUpload.single('file'), async (req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+
+    try {
+        const data = req.body;
+
+        await CompanySchema.updateOne({_id: data["_id"]}, {
+            $set: {
+                filename: req.file.filename
+            }
+        }).then(result => {
+            console.log(result);
+            res.status(201).json(result);
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({err: "Internal server Error!"});
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({err: "Internal server Error!"});
+    }
 });
 
 app.listen(PORT, () => {

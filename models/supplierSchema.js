@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 /**
  * 
- * SupplierID: It is an ID that can be used to find whether the user is approved by the Admin or not. It also helps in finding their documents from the documents file, as the name of the documents and the supplierID is always same. If Supplier ID is none then the document is not approved by the admin.
+ * SupplierID: It is an ID that can be used to find whether the user is approved by the Admin or not.
  * 
  * Name: It is the name of the supplier who is going to register.
  * 
@@ -29,6 +29,8 @@ const mongoose = require('mongoose');
  * Completed: The company applied and supplier has completed the services
  * 
  * authorizer: It is username of the admin who approved the supplier
+ * 
+ * filename: it is used to store the filename of the supplier
  * 
  */
 
@@ -72,6 +74,10 @@ const supplierSchema = mongoose.Schema({
         type: Array
     },
     authorizer: {
+        type: String,
+        default: ""
+    },
+    filename: {
         type: String,
         default: ""
     }

@@ -1,6 +1,7 @@
 const AdminSchema = require("../models/adminSchema");
 const SupplierSchema = require("../models/supplierSchema");
 const transport = require('../config/mailConfig');
+const path = require('path');
 
 const getAdmin = async (req, res) => {
   res.setHeader('Content-Type', 'text/plain');
@@ -171,11 +172,17 @@ const denySuppliers = async (req, res) => {
 const downloadFiles = async (req, res) => {
   try {
     const data = req.body;
-    res.setHeader('Content-Type', 'application/pdf');
-    res.status(200).download('./documents/'+data["_id"]+'.pdf');
+    await SupplierSchema.findOne({_id: data["_id"]}).then(result => {
+      res.setHeader('Content-Type', 'application/pdf');
+      var destination = path.join('documents', 'supplierData', result["filename"]);
+      res.status(200).download(destination);
+    }).catch(err => {
+      console.log(err);
+      res.setHeader('Content-Type', 'text/plain');
+    });
   } catch (err) {
     // console.log(err);
-    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Type', 'text/plain');
     res.status(500).json({err: "Internal server Error!"});
   }
 }
