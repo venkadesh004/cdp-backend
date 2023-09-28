@@ -12,6 +12,8 @@ const mongoose = require('mongoose');
  * 
  * status: It is requests the company sent to the suppliers.
  * 
+ * filename: Used to store the filename of the company
+ * 
  */
 
 const companySchema = mongoose.Schema({
@@ -33,6 +35,10 @@ const companySchema = mongoose.Schema({
     },
     status: {
         type: Array
+    },
+    filename: {
+        type: String,
+        default: ""
     }
 });
 
