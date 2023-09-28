@@ -35,7 +35,7 @@ const addAdmin = async (req, res) => {
   try {
     const data = req.body;
 
-    // // console.log(data);
+    // console.log(data);
 
     await AdminSchema.find({ username: data["username"] })
       .then(async (result) => {
@@ -76,11 +76,11 @@ const getUnapprovedData = async (req, res) => {
 
       res.status(200).json(unapprovedList);
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(500).json({err: "Internal server Error!"});
     })
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({err: "Internal server Error!"});
   }
 }
@@ -99,11 +99,11 @@ const getApprovedData = async (req, res) => {
 
       res.status(200).json(approvedList);
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(500).json({err: "Internal server Error!"});
     })
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({err: "Internal server Error!"});
   }
 }
@@ -113,7 +113,7 @@ const allowSuppliers = async (req, res) => {
   try {
     const data = req.body;
     
-    console.log(data["_id"]);
+    // console.log(data["_id"]);
 
     await SupplierSchema.updateOne({_id: data["_id"]}, {
       $set: {
@@ -123,11 +123,11 @@ const allowSuppliers = async (req, res) => {
     }).then((result) => {
       res.status(204).json(result);
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(500).json({err: "Internal server Error!"});
-    })
+    });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({err: "Internal server Error!"});
   }
 }
@@ -151,7 +151,7 @@ const denySuppliers = async (req, res) => {
 
         transport.sendMail(mailOptions, function (err, info) {
           if (err) {
-            console.log(err);
+            // console.log(err);
             res.status(500).json({err: "Internal server Error!"});
           } else {
             res.status(204).json(info.response);
@@ -159,11 +159,11 @@ const denySuppliers = async (req, res) => {
         });
       }
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(500).json({err: "Internal server Error!"});
     })
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({err: "Internal server Error!"});
   } 
 }
@@ -174,7 +174,7 @@ const downloadFiles = async (req, res) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.status(200).download('./documents/'+data["_id"]+'.pdf');
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.setHeader('Content-Type', 'application/pdf');
     res.status(500).json({err: "Internal server Error!"});
   }

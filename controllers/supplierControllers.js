@@ -1,51 +1,48 @@
 const SupplierSchema = require("../models/supplierSchema");
 
 const getSupplier = async (req, res) => {
+  res.setHeader("Content-Type", "text/plain");
   try {
     const data = req.body;
 
     await SupplierSchema.find({email: data["email"]}).then((result) => {
       if (result.length === 0) {
-        console.log(result);
-        res.setHeader('Content-Type', 'text/plain');
-        res.status(400).json({err: "User not found!"});
+        // console.log(result);
+        res.status(404).json({err: "User not found!"});
       } else {
         if (result[0]["password"] === data["password"]) {
-          res.setHeader('Content-Type', 'text/plain');
           res.status(200).json(result);
         } else {
-          res.setHeader('Content-Type', 'text/plain');
           res.status(401).json({err: "Password Mismatch!"});
         }
       }
     }).catch((err) => {
-      console.log(err);
-      res.setHeader('Content-Type', 'text/plain');
+      // console.log(err);
       res.status(500).json({err: "Internal server Error!"});
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
   }
 }
 
 const addSupplier = async (req, res) => {
+  res.setHeader("Content-Type", "text/plain");
+
   try {
     const data = req.body;
 
     await SupplierSchema.find({ email: data["email"] })
       .then(async (result) => {
         if (result.length > 0) {
-          res.setHeader("Content-Type", "text/plain");
           res.status(403).json({ err: "Email already Exists" });
         } else {
           await SupplierSchema.insertMany(data)
             .then((result) => {
-              res.setHeader("Content-Type", "text/plain");
               res.status(201).json(result);
             })
             .catch((err) => {
-              console.log(err);
-              res.setHeader("Content-Type", "text/plain");
+              // console.log(err);
               res.status(500).json({
                 err: "Internal server Error!",
               });
@@ -53,14 +50,103 @@ const addSupplier = async (req, res) => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        res.setHeader("Content-Type", "text/plain");
+        // console.log(err);
         res.status(500).json({ err: "Internal server Error!" });
       });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
   }
 };
 
+const editProfile = async (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  
+  try {
+    const data = req.body;
+
+    await SupplierSchema.updateOne({_id: data["_id"]}, data).then((result) => {
+      res.status(204).json(result);
+    }).catch(err => {
+      // console.log(err);
+      res.status(500).json({err: "Internal server Error!"});
+    });
+  } catch (err) {
+    // console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
+  }
+}
+
+const acceptContract = async (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  
+  try {
+    const data = req.body;
+
+    await SupplierSchema.findOne({_id: data["_id"]}).then(async result => {
+      var status = result["status"];
+      status.forEach(element => {
+        if (element["compMail"] === data["compMail"]) {
+          element["state"] = "ongoing"
+        }
+      });
+      // console.log(status);
+
+      await SupplierSchema.updateOne({_id: data["_id"]}, {$set: {
+        status: status
+      }}).then(output => {
+        // console.log(output);
+        res.status(204).json(output);
+      }).catch(err => {
+        // console.log(err);
+        res.status(500).json({err: "Internal server Error!"});
+      });
+    }).catch(err => {
+      // console.log(err);
+      res.status(500).json({err: "Internal server Error!"});
+    });
+  } catch (err) {
+    // console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
+  } 
+}
+
+const rejectContract = async (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  
+  try {
+    const data = req.body;
+
+    await SupplierSchema.findOne({_id: data["_id"]}).then(async result => {
+      var status = result["status"];
+      status.forEach(element => {
+        if (element["compMail"] === data["compMail"]) {
+          element["state"] = "rejected"
+        }
+      });
+      // console.log(status);
+
+      await SupplierSchema.updateOne({_id: data["_id"]}, {$set: {
+        status: status
+      }}).then(output => {
+        // console.log(output);
+        res.status(204).json(output);
+      }).catch(err => {
+        // console.log(err);
+        res.status(500).json({err: "Internal server Error!"});
+      });
+    }).catch(err => {
+      // console.log(err);
+      res.status(500).json({err: "Internal server Error!"});
+    });
+  } catch (err) {
+    // console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
+  } 
+}
+
 module.exports.getSupplier = getSupplier;
 module.exports.addSupplier = addSupplier;
+module.exports.editProfile = editProfile;
+module.exports.acceptContract = acceptContract;
+module.exports.rejectContract = rejectContract;
