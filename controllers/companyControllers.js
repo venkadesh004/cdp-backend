@@ -254,8 +254,8 @@ const contractComplete = async (req, res) => {
 
 const downloadFiles = async (req, res) => {
   try {
-    const data = req.body;
-    await SupplierSchema.findOne({ _id: data["_id"] })
+    const data = req.params.id;
+    await SupplierSchema.findOne({ _id: data })
       .then((result) => {
         res.setHeader("Content-Type", "application/pdf");
         var destination = path.join(
@@ -278,8 +278,8 @@ const downloadFiles = async (req, res) => {
 
 const downloadCompanyFile = async (req, res) => {
   try {
-    const data = req.body;
-    await CompanySchema.findOne({ _id: data["_id"] })
+    const data = req.params.id;
+    await CompanySchema.findOne({ _id: data })
       .then((result) => {
         res.setHeader("Content-Type", "application/pdf");
         var destination = path.join(

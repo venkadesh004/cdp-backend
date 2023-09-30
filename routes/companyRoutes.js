@@ -10,7 +10,7 @@ Router.route('/addComment').put(addComment);
 Router.route('/addRating').put(addRating);
 Router.route('/sendRequest').put(sendRequest);
 Router.route('/contractComplete').put(contractComplete);
-Router.route('/downloadFiles').post(downloadFiles);
-Router.route('/downloadCompanyFile').post(downloadCompanyFile);
+Router.route('/downloadFiles').get(downloadFiles);
+Router.route('/downloadCompanyFile').get(downloadCompanyFile);
 
 module.exports = Router;
