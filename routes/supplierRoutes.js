@@ -8,7 +8,7 @@ Router.route('/addSupplier').post(addSupplier);
 Router.route('/editProfile').put(editProfile);
 Router.route('/acceptContract').put(acceptContract);
 Router.route('/rejectContract').put(rejectContract);
-Router.route('/downloadFiles').post(downloadFiles);
-Router.route('/downloadCompanyFile').post(downloadCompanyFile);
+Router.route('/downloadFiles/:id').get(downloadFiles);
+Router.route('/downloadCompanyFile').get(downloadCompanyFile);
 
 module.exports = Router;

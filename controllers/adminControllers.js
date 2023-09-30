@@ -171,8 +171,8 @@ const denySuppliers = async (req, res) => {
 
 const downloadFiles = async (req, res) => {
   try {
-    const data = req.body;
-    await SupplierSchema.findOne({_id: data["_id"]}).then(result => {
+    const data = req.params.id;
+    await SupplierSchema.findOne({_id: data}).then(result => {
       res.setHeader('Content-Type', 'application/pdf');
       var destination = path.join('documents', 'supplierData', result["filename"]);
       res.status(200).download(destination);

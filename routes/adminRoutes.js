@@ -9,6 +9,6 @@ Router.route('/getUnapprovedData').get(getUnapprovedData);
 Router.route('/getApprovedData').get(getApprovedData);
 Router.route('/allowSuppliers').put(allowSuppliers);
 Router.route('/denySuppliers').put(denySuppliers);
-Router.route('/downloadFiles').post(downloadFiles);
+Router.route('/downloadFiles').get(downloadFiles);
 
 module.exports = Router;
