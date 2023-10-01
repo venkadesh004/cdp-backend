@@ -70,7 +70,7 @@ const getUnapprovedData = async (req, res) => {
       var unapprovedList = [];
 
       result.forEach(element => {
-        if (element["supplierID"] === "None") {
+        if (element["supplierID"] === "None" && element["authorizer"] === "") {
           unapprovedList.push(element);
         }
       });
@@ -139,33 +139,43 @@ const denySuppliers = async (req, res) => {
   try {
     const data = req.body;
 
-    await SupplierSchema.find({_id: data["_id"]}).then((result) => {
+    await SupplierSchema.find({_id: data["_id"]}).then(async (result) => {
       if (result.length === 0) {
         res.status(404).json({err: "ID not found!"});
       } else {
-        var mailOptions = {
-          from: process.env.MAILUSER,
-          to: result[0]["email"],
-          subject: "Rejection of the application",
-          text: data["comments"]
-        };
-
-        transport.sendMail(mailOptions, function (err, info) {
-          if (err) {
-            // console.log(err);
-            res.status(500).json({err: "Internal server Error!"});
-          } else {
-            res.status(204).json(info.response);
+        await SupplierSchema.updateOne({_id: data["_id"]}, {
+          $set: {
+            authorizer: data["username"]
           }
+        }).then((output) => {
+          var mailOptions = {
+            from: process.env.MAILUSER,
+            to: result[0]["email"],
+            subject: "Rejection of the application",
+            text: data["comments"]
+          };
+  
+          transport.sendMail(mailOptions, function (err, info) {
+            if (err) {
+              // console.log(err);
+              res.status(500).json({err: "Internal server Error!"});
+            } else {
+              res.status(204).json(info.response);
+            }
+          });
+          res.status(204).json(result);
+        }).catch((err) => {
+          // console.log(err);
+          res.status(500).json({err: "Internal server Error 1!"});
         });
       }
     }).catch((err) => {
       // console.log(err);
-      res.status(500).json({err: "Internal server Error!"});
+      res.status(500).json({err: "Internal server Error 2!"});
     })
   } catch (err) {
     // console.log(err);
-    res.status(500).json({err: "Internal server Error!"});
+    res.status(500).json({err: "Internal server Error 3!"});
   } 
 }
 

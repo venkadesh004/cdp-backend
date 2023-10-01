@@ -36,11 +36,12 @@ app.post('/supplier/fileUpload', supplierUpload.single('file'), async (req, res)
     res.setHeader('Content-Type', 'text/plain');
 
     try {
-        const data = req.body;
+        const data = req.body;  
 
         await SupplierSchema.updateOne({_id: data["_id"]}, {
             $set: {
-                filename: req.file.filename
+                filename: req.file.filename,
+                authorizer: ""
             }
         }).then(result => {
             console.log(result);
