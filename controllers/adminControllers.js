@@ -187,6 +187,26 @@ const downloadFiles = async (req, res) => {
   }
 }
 
+const getAdminID = async (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  try {
+    const data = req.params.id;
+    await AdminSchema.find({"_id": data}).then(result => {
+      if (result.length === 0) {
+        res.status(404).json({err: "Admin not found!"});
+      } else {
+        res.status(200).json(result);
+      }
+    }).catch(err => {
+      console.log(err);
+      res.status(500).json({err: "Internal server Error!"});
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
+  }
+};
+
 module.exports.getAdmin = getAdmin;
 module.exports.addAdmin = addAdmin;
 module.exports.getUnapprovedData = getUnapprovedData;
@@ -194,3 +214,4 @@ module.exports.getApprovedData = getApprovedData;
 module.exports.allowSuppliers = allowSuppliers;
 module.exports.denySuppliers = denySuppliers;
 module.exports.downloadFiles = downloadFiles;
+module.exports.getAdminID = getAdminID;
