@@ -300,6 +300,26 @@ const downloadCompanyFile = async (req, res) => {
   }
 };
 
+const getCompanyID = async (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  try {
+    const data = req.params.id;
+    await CompanySchema.find({"_id": data}).then(result => {
+      if (result.length === 0) {
+        res.status(404).json({err: "Company not found!"});
+      } else {
+        res.status(200).json(result);
+      }
+    }).catch(err => {
+      console.log(err);
+      res.status(500).json({err: "Internal server Error!"});
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
+  }
+};
+
 module.exports.getCompany = getCompany;
 module.exports.addCompany = addCompany;
 module.exports.getSuppliers = getSuppliers;
@@ -309,3 +329,4 @@ module.exports.sendRequest = sendRequest;
 module.exports.contractComplete = contractComplete;
 module.exports.downloadFiles = downloadFiles;
 module.exports.downloadCompanyFile = downloadCompanyFile;
+module.exports.getCompanyID = getCompanyID;

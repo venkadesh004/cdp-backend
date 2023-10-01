@@ -1,7 +1,7 @@
 const express = require('express');
 const Router = express.Router();
 
-const { getAdmin, addAdmin, getUnapprovedData, getApprovedData, allowSuppliers, denySuppliers, downloadFiles } = require('../controllers/adminControllers');
+const { getAdmin, addAdmin, getUnapprovedData, getApprovedData, allowSuppliers, denySuppliers, downloadFiles, getAdminID } = require('../controllers/adminControllers');
 
 Router.route('/getAdmin').post(getAdmin);
 Router.route('/addAdmin').post(addAdmin);
@@ -10,5 +10,6 @@ Router.route('/getApprovedData').get(getApprovedData);
 Router.route('/allowSuppliers').put(allowSuppliers);
 Router.route('/denySuppliers').put(denySuppliers);
 Router.route('/downloadFiles').get(downloadFiles);
+Router.route('/getAdminID/:id').get(getAdminID);
 
 module.exports = Router;
