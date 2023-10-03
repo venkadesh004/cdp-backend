@@ -14,6 +14,8 @@ const mongoose = require('mongoose');
  * 
  * filename: Used to store the filename of the company
  * 
+ * authorizer: Used to say who authorized the company
+ * 
  */
 
 const companySchema = mongoose.Schema({
@@ -39,7 +41,11 @@ const companySchema = mongoose.Schema({
     filename: {
         type: String,
         default: ""
-    }
+    },
+    authorizer: {
+        type: String,
+        default: ""
+    } 
 });
 
 const CompanySchema = mongoose.model("CompanySchema", companySchema);
