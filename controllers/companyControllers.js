@@ -63,20 +63,25 @@ const addCompany = async (req, res) => {
 };
 
 const getSuppliers = async (req, res) => {
-  res.setHeader("Content-Type", "text/plain");
-
+  res.setHeader('Content-Type', 'text/plain');
   try {
-    await SupplierSchema.find({})
-      .then((result) => {
-        res.status(200).json(result);
-      })
-      .catch((err) => {
-        // console.log(err);
-        res.status(500).json({ err: "Internal server Error!" });
+    await SupplierSchema.find({}).then((result) => {
+      var approvedList = [];
+
+      result.forEach(element => {
+        if (element["supplierID"] !== "None") {
+          approvedList.push(element);
+        }
       });
+
+      res.status(200).json(approvedList);
+    }).catch((err) => {
+      // console.log(err);
+      res.status(500).json({err: "Internal server Error!"});
+    })
   } catch (err) {
     // console.log(err);
-    res.status(500).json({ err: "Internal server Error!" });
+    res.status(500).json({err: "Internal server Error!"});
   }
 };
 
@@ -233,9 +238,32 @@ const contractComplete = async (req, res) => {
             },
           }
         )
-          .then((output) => {
+          .then(async (output) => {
             // console.log(output);
-            res.status(204).json(output);
+            await CompanySchema.findOne({email: data["compMail"]}).then(async newOutput => {
+              var compStatusArray = newOutput.status;
+
+              compStatusArray.forEach(element => {
+                if (element["supID"] === data["_id"]) {
+                  element["status"] = "completed";
+                }
+              });
+
+              await CompanySchema.updateOne({
+                email: data["compMail"]
+              }, {
+                $set: {
+                  status: compStatusArray
+                }
+              }).then(finalOutput => {
+                console.log(finalOutput);
+                res.status(204).json(finalOutput);
+              }).catch(err => {
+                res.status(500).json({err: "Internal server Error!"});
+              })
+            }).catch(err => {
+              res.status(500).json({err: "Internal server Error!"});
+            })
           })
           .catch((err) => {
             // console.log(err);
@@ -263,6 +291,7 @@ const downloadFiles = async (req, res) => {
           "supplierData",
           result["filename"]
         );
+        console.log(destination);
         res.status(200).download(destination);
       })
       .catch((err) => {
@@ -281,12 +310,14 @@ const downloadCompanyFile = async (req, res) => {
     const data = req.params.id;
     await CompanySchema.findOne({ _id: data })
       .then((result) => {
+        console.log(result);
         res.setHeader("Content-Type", "application/pdf");
         var destination = path.join(
           "documents",
           "companyData",
           result["filename"]
         );
+        console.log(destination);
         res.status(200).download(destination);
       })
       .catch((err) => {
@@ -320,6 +351,39 @@ const getCompanyID = async (req, res) => {
   }
 };
 
+const getAcceptedStatus = async (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+
+  try {
+    const data = req.params.id;
+
+    await CompanySchema.find({ _id: data })
+      .then(async (result) => {
+        var supIDArray = [];
+        console.log(result[0]["status"]);
+        await result[0]["status"].forEach(element => {
+          if (element["status"] === "ongoing") {
+            supIDArray.push(element["supID"]);
+          }
+        });
+        console.log(supIDArray);
+        SupplierSchema.find({_id: {$in: supIDArray}}).then(output => {
+          console.log(output);
+          res.status(200).json(output);
+        }).catch(err => {
+          console.log(err);
+          res.status(500).json({err: "Internal server Error!"});
+        })
+      })
+      .catch((err) => {
+        res.status(500).json({ err: "Internal server Error!" });
+      });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({err: "Internal server Error!"});
+  }
+}
+
 module.exports.getCompany = getCompany;
 module.exports.addCompany = addCompany;
 module.exports.getSuppliers = getSuppliers;
@@ -330,3 +394,4 @@ module.exports.contractComplete = contractComplete;
 module.exports.downloadFiles = downloadFiles;
 module.exports.downloadCompanyFile = downloadCompanyFile;
 module.exports.getCompanyID = getCompanyID;
+module.exports.getAcceptedStatus = getAcceptedStatus;
